@@ -1,0 +1,8 @@
+const Constants = {
+    GET_CATEGORIES: "GET_ALL_CATEGORIES",
+    GET_CATEGORY:"GET_SINGLE_CATEGORY",
+    SEARCH_JOKES:"SEARCH_FOR_A_JOKE",
+    RANDOM_JOKES:"GET_A_RANDOM_JOKE"
+  };
+  
+  export default Constants;
