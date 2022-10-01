@@ -24,7 +24,6 @@ const Search = ()=>{
         setQuery(text)
         dispatch(searchJoke(toggleIsLoading,text))
       }
-      console.log(suggestions)
     return (
         <View style={{position:"relative"}}>
            <View style={styles.searchComponent}>
