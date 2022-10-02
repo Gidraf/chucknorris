@@ -15,14 +15,18 @@ const Categories = ({category, setCategory})=>{
         return state.categories;
       });
 
-      const toggleIsLoading = ()=>{
+      const handleError = (data)=>{
 
       }
-      useEffect(()=>{dispatch(getCategories(toggleIsLoading))},[])
+
+      const toggleIsLoading = (loading)=>{
+            setIsLoading(loading)
+      }
+      useEffect(()=>{dispatch(getCategories(toggleIsLoading, handleError))},[])
     return (
         <View style={styles.container}>
            <Text style={styles.header}>Categories</Text>
-           <ScrollView style={styles.categories} horizontal={true}>
+           {!isLoading ? <ScrollView style={styles.categories} horizontal={true}>
             {
                 categories.map((item,i)=>(
                     <View key={i}>
@@ -33,7 +37,7 @@ const Categories = ({category, setCategory})=>{
                     </View>
                 ))
             }
-           </ScrollView>
+           </ScrollView> : <Text style={{color:"black"}}>Loading...</Text>}
         </View>
     )
 }

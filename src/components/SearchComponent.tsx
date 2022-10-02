@@ -13,6 +13,7 @@ const Search = ()=>{
     const [query, setQuery] = React.useState("")
     const dispatch = useAppDispatch();
     const [isLoading, setIsLoading] = React.useState(false)
+    const [errors, setErrors] = React.useState("")
     const suggestions = useAppSelector((state: any) => {
         return state.searchJoke;
       });
@@ -20,28 +21,35 @@ const Search = ()=>{
       const toggleIsLoading = ()=>{
 
       }
-      const handleOnChange = (text)=>{
+      const handleOnChange = (text: string)=>{
         setQuery(text)
-        dispatch(searchJoke(toggleIsLoading,text))
+        setErrors("")
+        dispatch(searchJoke(toggleIsLoading,text, handleError))
       }
+
+      const handleError = (err: string)=>{
+        setErrors(err)
+        dispatch(clearSuggestion()); 
+    }
     return (
         <View style={{position:"relative"}}>
            <View style={styles.searchComponent}>
               <TextInput value={query} placeholderTextColor={"#fff"} onChangeText={handleOnChange} placeholder="Seacrh for Jokes" style={styles.search}/>
-              <Text style={styles.searchBtn}>🔍</Text>
+              <TouchableOpacity onPress={()=>{(!query)? setErrors("Joke name can't be empty") : dispatch(searchJoke(toggleIsLoading,query, handleError))}}><Text style={styles.searchBtn}>🔍</Text></TouchableOpacity>
            </View>
            {(query && suggestions.length > 0) &&  <ScrollView style={styles.suggestion}>
             <TouchableOpacity onPress={()=>{setQuery("");}}>
                 <Text style={{padding:4}}>❌</Text>
             </TouchableOpacity>
             { suggestions.map((item: { value: string; },i: React.Key)=>(
-                <TouchableOpacity onPress={()=>{dispatch(selectJoke(item));dispatch(clearSuggestion()); }}>
-                <View key={i} style={{borderBottomColor:"black", borderBottomWidth:1,}}>
+                <TouchableOpacity key={i} onPress={()=>{dispatch(selectJoke(item));dispatch(clearSuggestion()); }}>
+                <View style={{borderBottomColor:"black", borderBottomWidth:1,}}>
                      <Text style={styles.sugText} key={i}>{`${item.value.substring(0,20)}...`}</Text>
                 </View>
                 </TouchableOpacity>
             ))}
          </ScrollView>}
+         {errors && !isLoading && <Text style={{textAlign:"center", color:"red"}}>{errors}</Text>}
         </View>
     )
 }
@@ -67,7 +75,7 @@ const styles = StyleSheet.create({
     searchBtn:{
         backgroundColor:"#212121",
        fontSize:40,
-       width:"15%",
+       width:"100%",
        textAlign:"center",
        borderTopRightRadius:10,
        borderBottomRightRadius:10

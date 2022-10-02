@@ -11,12 +11,11 @@ import { searchReducer } from './SearchReducer';
  * @param toggleLoading 
  * @returns 
  */
-export const getCategories =
-  (toggleLoading: any) => async (dispatch: any) => {
-    toggleLoading();
+export const getCategories = (toggleLoading: Function, handleError: Function) => async (dispatch: any) => {
+    toggleLoading(true);
     fetch(`https://api.chucknorris.io/jokes/categories`)
       .then((response) => {
-        toggleLoading();
+        toggleLoading(false);
         if (response.status === 200) {
           response.json().then((data) => {
             store.dispatch(categoryReducer(data));
@@ -25,8 +24,8 @@ export const getCategories =
         return;
       })
       .catch((e) => {
-        console.log(e.response.data)
-        toggleLoading();
+        handleError("Somethin Went wrong while fetchind data")
+        toggleLoading(false);
       });
   };
 
@@ -36,8 +35,7 @@ export const getCategories =
  * @param category 
  * @returns 
  */
- export const selectJoke =
- (data:any) => async (dispatch: any) => {
+ export const selectJoke = (data:any) => async (dispatch: any) => {
     store.dispatch(randomReducer(data));
  };
 
@@ -48,39 +46,45 @@ export const getCategories =
 
 
   export const getRandomJoke =
-  (toggleLoading: any, category) => async (dispatch: any) => {
-    toggleLoading();
+  (toggleLoading: any, category, handleError) => async (dispatch: any) => {
+    toggleLoading(true);
     fetch(!category ? `https://api.chucknorris.io/jokes/random` : `https://api.chucknorris.io/jokes/random?category=${category}`)
       .then((response) => {
-        toggleLoading();
+        toggleLoading(false);
         if (response.status === 200) {
           response.json().then((data) => {
             store.dispatch(randomReducer(data));
           });
+        }else{
+            handleError("Something went wrong while fetching data")
         }
         return;
       })
       .catch((e) => {
-        toggleLoading()
-        console.log(e.response.data)
-      });
+        handleError("Something went wrong while fetching data")
+        toggleLoading(false)
+    });
   };
 
-  export const searchJoke =
-  (toggleLoading: any,query) => async (dispatch: any) => {
+  export const searchJoke = (toggleLoading: any,query, handleError) => async (dispatch: any) => {
     toggleLoading();
     fetch(`https://api.chucknorris.io/jokes/search?query=${query}`)
       .then((response) => {
         toggleLoading();
         if (response.status === 200) {
           response.json().then((data) => {
+            if(data.result.length > 0)
             store.dispatch(searchReducer(data.result));
+            else handleError(`No result was found with the name ${query}`)
           });
+        }
+        else {
+            handleError("Something went wrong while fetching data")
         }
         return;
       })
       .catch((e) => {
-        console.log(e.response.data)
+        handleError("Something went wrong while fetching data")
         toggleLoading();
       });
   };

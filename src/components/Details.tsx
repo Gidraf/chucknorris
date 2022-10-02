@@ -7,43 +7,37 @@ import Svg, { Path } from "react-native-svg"
 import Toolbar from "./Toolbar"
 import { getRandomJoke } from "../state/actions";
 
-const categories = [
-    {"name":"First"},
-    {"name":"Second"},
-    {"name":"Third"},
-    {"name":"Fourth"},
-    {"name":"Fifth"},
-    {"name":"Sixt"},
-]
-
 const Details = ({category})=>{
     const dispatch = useAppDispatch();
     const [isLoading, setIsLoading] = React.useState(false)
+    const [errors, setErrors] = React.useState("")
     const randomJoke = useAppSelector((state: any) => {
         return state.randomJoke;
       });
-      const toggleIsLoading = ()=>{
-        if(isLoading){
-            setIsLoading(false)
-        }
-        else {
-            setIsLoading(true)
-        }
+      const toggleIsLoading = (loading)=>{
+        setIsLoading(loading)
     }
-      React.useEffect(()=>{dispatch(getRandomJoke(toggleIsLoading,category))},[category])
+    const handleError = (err: string)=>{
+        setErrors(err)
+    }
+      React.useEffect(()=>{dispatch(getRandomJoke(toggleIsLoading,category, handleError))},[category])
     return (
         <View style={styles.container}>
            <Image resizeMode="contain" style={styles.iconImage} source={{uri:"https://api.chucknorris.io/img/chucknorris_logo_coloured_small@2x.png"}}/>
-           <Text style={styles.detailText}>{
+           {!isLoading &&  <Text style={styles.detailText}>{
             Object.keys(randomJoke).length>0 && randomJoke.value
            }
            </Text>
-           <LottieView
+           }
+           {
+            isLoading &&  <Text style={{color:"black"}}>Loading...</Text>
+           }
+           { !isLoading && <LottieView
            style={styles.laugh}
         source={require('../../assets/laugh.json')}
         autoPlay
         loop
-      />
+      />}
         </View>
     )
 }

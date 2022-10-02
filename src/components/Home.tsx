@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, Dimensions, TextInput } from "react-native"
-
+import { View, Text, StyleSheet, Dimensions, TextInput, Alert } from "react-native"
 import * as React from "react"
 import Svg, { Path } from "react-native-svg"
 import Toolbar from "./Toolbar"
@@ -9,7 +8,7 @@ import Search from "./SearchComponent"
 
 
 const Home = ()=>{
-    const [category, setCategory] = React.useState("")
+    const [category, setCategory] = React.useState("")    
     return (
         <View style={styles.container}>
            <Toolbar/>
